@@ -28,10 +28,14 @@ module.exports = {
       { rel: "icon", type: "image/png", sizes: "96x96", href: BASE_PATH + "favicon-96x96.png" },
       { rel: "icon", type: "image/png", sizes: "16x16", href: BASE_PATH + "favicon-16x16.png" },
       { rel: "manifest", href: BASE_PATH + "manifest.json" },
-    ]
+    ],
+    script: [
+      { async: true, src: "https://www.googletagmanager.com/gtag/js?id=UA-108846016-1" },
+    ],
   },
   plugins: [
     '~/plugins/bootstrap',
+    { src: '~/plugins/ga', ssr: false },
   ],
   loading: { color: '#3B8070' },
   router: {
