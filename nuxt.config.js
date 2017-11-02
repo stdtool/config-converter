@@ -47,7 +47,6 @@ module.exports = {
   },
   build: {
     vendor: [
-      "autosize",
       "brace",
     ],
     extend (config, ctx) {
