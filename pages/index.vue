@@ -48,11 +48,14 @@
 <script>
 import yaml from "js-yaml"
 import yamlPkg from "js-yaml/package.json"
+import ini from "ini"
+import iniPkg from "ini/package.json"
 
 const ace = process.browser ? require("brace") : null
 if (process.browser) {
   require("brace/mode/json")
   require("brace/mode/yaml")
+  require("brace/mode/ini")
   require("brace/theme/github")
 }
 
@@ -68,16 +71,17 @@ function createEditor($elem, type) {
   return editor
 }
 
-const DEFAULT_INPUT_CONTEXT = `object:
-  foo: string!
-  bar: 100
-  baz: true
-  qux: null
-array:
-  - name: cris
-    email: corgidisco@gmail.com
-  - name: cris2
-    email: corgi.disco@gmail.com
+const DEFAULT_INPUT_CONTEXT = `users:
+  object:
+    foo: string!
+    bar: 100
+    baz: true
+    qux: null
+  array:
+    - name: cris
+      email: corgidisco@gmail.com
+    - name: cris2
+      email: corgi.disco@gmail.com
 `
 
 export default {
@@ -86,6 +90,7 @@ export default {
       options: [
         { name: `YAML (js-yaml@${yamlPkg.version})`, value: "yaml" },
         { name: "JSON (builtin)", value: "json" },
+        { name: `ini (ini@${iniPkg.version})`, value: "ini" },
       ],
       inputEditor: null,
       outputEditor: null,
@@ -137,6 +142,8 @@ export default {
           medium = yaml.load(input)
         } else if (this.inputType === "json") {
           medium = JSON.parse(input)
+        } else if (this.inputType === "ini") {
+          medium = ini.decode(input)
         }
 
         // output
@@ -145,6 +152,8 @@ export default {
           output = JSON.stringify(medium, null, 2)
         } else if (this.outputType === "yaml") {
           output = yaml.dump(medium)
+        } else if (this.outputType === "ini") {
+          output = ini.encode(medium)
         }
 
         this.outputEditor.setValue(output + "\n")
