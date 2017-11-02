@@ -10,11 +10,11 @@
     "precommit": "npm run lint"
   },
   "dependencies": {
-    "autosize": "^4.0.0",
     "bootstrap": "^4.0.0-beta.2",
+    "brace": "^0.10.0",
+    "font-awesome": "^4.7.0",
     "js-yaml": "^3.10.0",
-    "nuxt": "^1.0.0-rc11",
-    "yaml-js": "^0.2.0"
+    "nuxt": "^1.0.0-rc11"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",

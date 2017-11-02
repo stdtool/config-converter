@@ -7,7 +7,8 @@ module.exports = {
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '.' },
+      { hid: 'description', name: 'description', content: 'markup translator. for example, yaml to json, json to yaml.' },
+      { hid: 'keywords', name: 'keywords', content: 'markup,translator,yaml,yml,json' },
       { name: "msapplication-TileColor", content: "#ffffff" },
       { name: "msapplication-TileImage", content: BASE_PATH + "ms-icon-144x144.png" },
       { name: "theme-color", content: "#ffffff" },
@@ -33,8 +34,11 @@ module.exports = {
       { async: true, src: "https://www.googletagmanager.com/gtag/js?id=UA-108846016-1" },
     ],
   },
+  css: [
+    "bootstrap/dist/css/bootstrap.min.css",
+    "font-awesome/css/font-awesome.min.css",
+  ],
   plugins: [
-    '~/plugins/bootstrap',
     { src: '~/plugins/ga', ssr: false },
   ],
   loading: { color: '#3B8070' },
@@ -43,8 +47,8 @@ module.exports = {
   },
   build: {
     vendor: [
-      "bootstrap/dist/css/bootstrap.min.css",
       "autosize",
+      "brace",
     ],
     extend (config, ctx) {
       if (ctx.dev && ctx.isClient) {

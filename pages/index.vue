@@ -1,45 +1,145 @@
+<style scoped>
+  .editor {
+    width: 100%;
+  }
+  @media (max-width: 767px) {
+    .btn-exchange-container {
+      margin-top: 8px!important;
+      margin-top: .5rem!important;
+      margin-bottom: 8px!important;
+      margin-bottom: .5rem!important;
+    }
+    .btn-exchange-container > button {
+      display: block;
+      width: 100%;
+    }
+  }
+</style>
 <template>
   <section class="container">
+    <h1>Markup Translator</h1>
     <div class="row">
-      <div class="col-md-6">
-
-        <textarea class="form-control" @input="input" ref="inputTextarea"></textarea>
+      <div class="col-md-4">
+        <select class="form-control" id="inputInput" v-model:value="inputType">
+          <option v-for="option in options" :value="option.value">{{ option.name }}</option>
+        </select>
+      </div>
+      <div class="col-md-2 text-right btn-exchange-container">
+        <button type="button" class="btn btn-outline-primary" @click="switchIO"><i class="fa fa-exchange"></i></button>
       </div>
       <div class="col-md-6">
-        <textarea class="form-control" :value="output" readonly ref="outputTextarea"></textarea>
+        <select class="form-control" id="inputInput" v-model:value="outputType">
+          <option v-for="option in options" :value="option.value">{{ option.name }}</option>
+        </select>
+      </div>
+    </div>
+    <div class="row mt-4">
+      <div class="col-md-6">
+        <div class="editor" ref="inputEditor"></div>
+      </div>
+      <div class="col-md-6">
+        <div class="editor" ref="outputEditor"></div>
       </div>
     </div>
     <div class="alert alert-danger" v-if="error">{{ error.message }}</div>
-
-    <ul>
-      <li>js-yaml : <code>{{ yamlVersion }}</code></li>
-    </ul>
   </section>
 </template>
 
 <script>
-import autosize from "autosize"
 import yaml from "js-yaml"
 import yamlPkg from "js-yaml/package.json"
+
+const ace = process.browser ? require("brace") : null
+if (process.browser) {
+  require("brace/mode/json")
+  require("brace/mode/yaml")
+  require("brace/theme/github")
+}
+
+function createEditor($elem, type) {
+  const editor = ace.edit($elem)
+  editor.setTheme("ace/theme/github")
+  editor.getSession().setMode(`ace/mode/${type}`)
+  editor.setOptions({
+    maxLines: Infinity,
+    fontSize: ".8rem",
+  })
+  editor.$blockScrolling = Infinity
+  return editor
+}
+
+const DEFAULT_INPUT_CONTEXT = `object:
+  foo: string!
+  bar: 100
+  baz: true
+  qux: null
+array:
+  - name: cris
+    email: corgidisco@gmail.com
+  - name: cris2
+    email: corgi.disco@gmail.com
+`
 
 export default {
   data() {
     return {
-      yamlVersion: yamlPkg.version,
-      output: null,
+      options: [
+        { name: `YAML (js-yaml@${yamlPkg.version})`, value: "yaml" },
+        { name: "JSON (builtin)", value: "json" },
+      ],
+      inputEditor: null,
+      outputEditor: null,
+      inputType: "yaml",
+      outputType: "json",
       error: null,
     }
   },
   mounted() {
-    autosize(this.$refs.inputTextarea)
-    autosize(this.$refs.outputTextarea)
+    this.inputEditor = createEditor(this.$refs.inputEditor, this.inputType)
+
+    this.inputEditor.setValue(DEFAULT_INPUT_CONTEXT)
+    this.inputEditor.clearSelection()
+
+    this.inputEditor.getSession().on("change", this.changeInput)
+    this.$nextTick(this.changeInput)
+
+
+    this.outputEditor = createEditor(this.$refs.outputEditor, this.outputType)
+    this.outputEditor.setReadOnly(true)
   },
   methods: {
-    input(e) {
+    switchIO() {
+      [this.inputType, this.outputType] = [this.outputType, this.inputType]
+
+      this.inputEditor.getSession().setMode(`ace/mode/${this.inputType}`)
+      this.outputEditor.getSession().setMode(`ace/mode/${this.outputType}`)
+
+      this.inputEditor.setValue(this.outputEditor.getValue())
+      this.inputEditor.clearSelection()
+      this.changeInput()
+    },
+    changeInput() {
       try {
-        this.output = JSON.stringify(yaml.load(e.target.value), null, 2)
+        let input = this.inputEditor.getValue()
+        let medium = null
+        // input
+        if (this.inputType === "yaml") {
+          medium = yaml.load(input)
+        } else if (this.inputType === "json") {
+          medium = JSON.parse(input)
+        }
+
+        // output
+        let output = null
+        if (this.outputType === "json") {
+          output = JSON.stringify(medium, null, 2)
+        } else if (this.outputType === "yaml") {
+          output = yaml.dump(medium)
+        }
+
+        this.outputEditor.setValue(output + "\n")
+        this.outputEditor.clearSelection()
         this.error = null
-        this.$nextTick(() => autosize.update(this.$refs.outputTextarea))
       } catch (e) {
         this.error = e
       }
