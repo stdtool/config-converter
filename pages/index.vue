@@ -20,16 +20,16 @@
     <h1>Markup Translator</h1>
     <div class="row">
       <div class="col-md-4">
-        <select class="form-control" id="inputInput" v-model:value="inputType">
-          <option v-for="option in options" :value="option.value">{{ option.name }}</option>
+        <select class="form-control" v-model="inputType">
+          <option v-for="option in options" :value="option.value" :key="option.value">{{ option.name }}</option>
         </select>
       </div>
       <div class="col-md-2 text-right btn-exchange-container">
         <button type="button" class="btn btn-outline-primary" @click="switchIO"><i class="fa fa-exchange"></i></button>
       </div>
       <div class="col-md-6">
-        <select class="form-control" id="inputInput" v-model:value="outputType">
-          <option v-for="option in options" :value="option.value">{{ option.name }}</option>
+        <select class="form-control" v-model="outputType">
+          <option v-for="option in options" :value="option.value" :key="option.value">{{ option.name }}</option>
         </select>
       </div>
     </div>
@@ -106,6 +106,16 @@ export default {
 
     this.outputEditor = createEditor(this.$refs.outputEditor, this.outputType)
     this.outputEditor.setReadOnly(true)
+  },
+  watch: {
+    inputType(to) {
+      this.changeInput()
+      this.inputEditor.getSession().setMode(`ace/mode/${to}`)
+    },
+    outputType(to) {
+      this.changeInput()
+      this.outputEditor.getSession().setMode(`ace/mode/${to}`)
+    },
   },
   methods: {
     switchIO() {
