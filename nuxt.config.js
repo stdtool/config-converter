@@ -1,14 +1,28 @@
 
 const BASE_PATH = process.env.NODE_ENV === 'dev' ? '/' : '/markup-translator/'
 
+const options = [
+  "json",
+  "yaml",
+  "ini",
+  "toml",
+]
+
+let sets = [];
+options.forEach(inOption => {
+  options.forEach(outOption => {
+    if (inOption !== outOption) sets.push(`${inOption} to ${outOption}`)
+  })
+})
+
 module.exports = {
   head: {
     title: 'Markup Translator - Utilon',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: 'markup translator. for example, yaml to json, json to ini.' },
-      { hid: 'keywords', name: 'keywords', content: 'markup,translator,yaml,yml,json,ini' },
+      { hid: 'description', name: 'description', content: `Markup Translator. ${sets.join(", ")}.` },
+      { hid: 'keywords', name: 'keywords', content: 'markup,translator,yaml,yml,json,ini,toml' },
       { name: "msapplication-TileColor", content: "#ffffff" },
       { name: "msapplication-TileImage", content: BASE_PATH + "ms-icon-144x144.png" },
       { name: "theme-color", content: "#ffffff" },
