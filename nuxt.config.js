@@ -1,5 +1,5 @@
 
-const BASE_PATH = process.env.NODE_ENV === 'dev' ? '/' : '/markup-translator/'
+const BASE_PATH = process.env.NODE_ENV === 'dev' ? '/' : '/config-translator/'
 
 const options = [
   "json",
@@ -17,12 +17,12 @@ options.forEach(inOption => {
 
 module.exports = {
   head: {
-    title: 'Markup Translator - Utilon',
+    title: 'Config Translator - Utilon',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: `Markup Translator. ${sets.join(", ")}.` },
-      { hid: 'keywords', name: 'keywords', content: 'markup,translator,yaml,yml,json,ini,toml' },
+      { hid: 'description', name: 'description', content: `Config Translator. ${sets.join(", ")}.` },
+      { hid: 'keywords', name: 'keywords', content: 'config,translator,yaml,yml,json,ini,toml' },
       { name: "msapplication-TileColor", content: "#ffffff" },
       { name: "msapplication-TileImage", content: BASE_PATH + "ms-icon-144x144.png" },
       { name: "theme-color", content: "#ffffff" },

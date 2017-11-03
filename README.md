@@ -1,8 +1,6 @@
-Markup Translator
+Config Translator
 =================
 
-[Website](https://utilon.github.io/markup-translator/)
+[Website](https://utilon.github.io/config-translator/)
 
-Markup Translator.
-
-for example, yaml to json, json to ini, ini to yaml, and so on.
+Translator that supports all config languages like yaml, json, ini, toml and so on.
