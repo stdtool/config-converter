@@ -52,7 +52,7 @@
     <div class="row">
       <div class="col-md-4">
         <select class="form-control" v-model="inputType">
-          <option v-for="option in options" :value="option.value" :key="option.value">{{ option.name }}</option>
+          <option v-for="option in inputOptions" :value="option.value" :key="option.value">{{ option.name }}</option>
         </select>
       </div>
       <div class="col-md-2 text-right btn-exchange-container">
@@ -60,7 +60,7 @@
       </div>
       <div class="col-md-6">
         <select class="form-control" v-model="outputType">
-          <option v-for="option in options" :value="option.value" :key="option.value">{{ option.name }}</option>
+          <option v-for="option in outputOptions" :value="option.value" :key="option.value">{{ option.name }}</option>
         </select>
       </div>
     </div>
@@ -81,11 +81,16 @@ import yaml from "js-yaml"
 import yamlPkg from "js-yaml/package.json"
 import ini from "ini"
 import iniPkg from "ini/package.json"
+import toml from "toml"
+import tomlPkg from "toml/package.json"
+import * as tomlify from "tomlify"
+import tomlifyPkg from "tomlify/package.json"
 
 const ace = process.browser ? require("brace") : null
 if (process.browser) {
   require("brace/mode/json")
   require("brace/mode/yaml")
+  require("brace/mode/toml")
   require("brace/mode/ini")
   require("brace/theme/chrome")
 }
@@ -118,10 +123,17 @@ const DEFAULT_INPUT_CONTEXT = `users:
 export default {
   data() {
     return {
-      options: [
-        { name: `YAML (js-yaml@${yamlPkg.version})`, value: "yaml" },
-        { name: "JSON (builtin)", value: "json" },
+      inputOptions: [
+        { name: `yaml (js-yaml@${yamlPkg.version})`, value: "yaml" },
+        { name: "json (builtin)", value: "json" },
         { name: `ini (ini@${iniPkg.version})`, value: "ini" },
+        { name: `toml (toml@${tomlPkg.version})`, value: "toml" },
+      ],
+      outputOptions: [
+        { name: `yaml (js-yaml@${yamlPkg.version})`, value: "yaml" },
+        { name: "json (builtin)", value: "json" },
+        { name: `ini (ini@${iniPkg.version})`, value: "ini" },
+        { name: `toml (tomlify@${tomlifyPkg.version})`, value: "toml" },
       ],
       inputEditor: null,
       outputEditor: null,
@@ -174,6 +186,8 @@ export default {
           medium = JSON.parse(input)
         } else if (this.inputType === "ini") {
           medium = ini.decode(input)
+        } else if (this.inputType === "toml") {
+          medium = toml.parse(input)
         }
 
         // output
@@ -184,6 +198,8 @@ export default {
           output = yaml.dump(medium)
         } else if (this.outputType === "ini") {
           output = ini.encode(medium)
+        } else if (this.outputType === "toml") {
+          output = tomlify(medium)
         }
 
         this.outputEditor.setValue(output + "\n")
