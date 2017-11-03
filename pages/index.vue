@@ -122,6 +122,12 @@ const DEFAULT_INPUT_CONTEXT = `users:
 
 export default {
   data() {
+    let inputType
+    let outputType
+    if (process.browser && window && window.localStorage) {
+      inputType = window.localStorage.getItem("input_type")
+      outputType = window.localStorage.getItem("output_type")
+    }
     return {
       inputOptions: [
         { name: `yaml (js-yaml@${yamlPkg.version})`, value: "yaml" },
@@ -137,15 +143,20 @@ export default {
       ],
       inputEditor: null,
       outputEditor: null,
-      inputType: "yaml",
-      outputType: "json",
+      inputType: inputType || "yaml",
+      outputType: outputType || "json",
       error: null,
     }
   },
   mounted() {
     this.inputEditor = createEditor(this.$refs.inputEditor, this.inputType)
 
-    this.inputEditor.setValue(DEFAULT_INPUT_CONTEXT)
+    let editorContext
+    if (window && window.localStorage) {
+      editorContext = window.localStorage.getItem("editor_context")
+    }
+
+    this.inputEditor.setValue(editorContext || DEFAULT_INPUT_CONTEXT)
     this.inputEditor.clearSelection()
 
     this.inputEditor.getSession().on("change", this.changeInput)
@@ -158,10 +169,16 @@ export default {
     inputType(to) {
       this.changeInput()
       this.inputEditor.getSession().setMode(`ace/mode/${to}`)
+      if (window && window.localStorage) {
+        this.$nextTick(() => window.localStorage.setItem("input_type", to))
+      }
     },
     outputType(to) {
       this.changeInput()
       this.outputEditor.getSession().setMode(`ace/mode/${to}`)
+      if (window && window.localStorage) {
+        this.$nextTick(() => window.localStorage.setItem("output_type", to))
+      }
     },
   },
   methods: {
@@ -178,6 +195,9 @@ export default {
     changeInput() {
       try {
         let input = this.inputEditor.getValue()
+        if (window && window.localStorage) {
+          this.$nextTick(() => window.localStorage.setItem("editor_context", input))
+        }
         let medium = null
         // input
         if (this.inputType === "yaml") {
