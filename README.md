@@ -1,6 +1,10 @@
-Config Translator
-=================
+# Config Converter
 
-[Website](https://utilon.github.io/config-translator/)
+[Website](https://stdtool.github.io/config-converter/)
 
-Translator that supports all config languages like yaml, json, ini, toml and so on.
+Converter that supports all config languages like yaml, json, ini, toml and so on.
+
+## Next Plan
+
+- XML
+- http://jmespath.org/
